@@ -1,6 +1,6 @@
 // usa movies.service.ts para traer las películas
 // la lógica de llamadas http está en src/app/core/services/movies.service.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MoviesService, Movie } from '../../core/services/movies.service';
 
@@ -20,7 +20,10 @@ export class MoviesPortalComponent implements OnInit {
   selectedGenre: string = '';    // género seleccionado en el select
   allGenres: string[] = [];      // géneros únicos para el select
 
-  constructor(private moviesService: MoviesService) {}
+  constructor(
+    private moviesService: MoviesService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.loadMovies();
@@ -36,10 +39,12 @@ export class MoviesPortalComponent implements OnInit {
         const genresFlat = data.flatMap(m => m.genre ?? []);
         this.allGenres = [...new Set(genresFlat)].sort();
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.errorMsg = 'Error al cargar las películas. Verificá la API key.';
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }

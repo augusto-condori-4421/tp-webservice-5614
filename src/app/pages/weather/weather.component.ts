@@ -1,6 +1,6 @@
 // usa weather.service.ts para buscar el clima por ciudad
 // la lógica de llamadas http está en src/app/core/services/weather.service.ts
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { WeatherService, WeatherResult } from '../../core/services/weather.service';
 
@@ -18,7 +18,10 @@ export class WeatherComponent {
   errorMsg: string = '';
   notFound: boolean = false;
 
-  constructor(private weatherService: WeatherService) {}
+  constructor(
+    private weatherService: WeatherService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   // busco el clima de la ciudad ingresada
   onSearch(): void {
@@ -33,6 +36,7 @@ export class WeatherComponent {
       next: (data) => {
         this.weatherResult = data;
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         if (err?.status === 404) {
@@ -41,6 +45,7 @@ export class WeatherComponent {
           this.errorMsg = 'Error al consultar el clima. Intentá de nuevo.';
         }
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }

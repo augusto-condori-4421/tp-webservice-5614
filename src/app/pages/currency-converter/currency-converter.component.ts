@@ -1,6 +1,6 @@
 // usa currency.service.ts para la lista de monedas y la conversión
 // la lógica de llamadas http está en src/app/core/services/currency.service.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CurrencyService } from '../../core/services/currency.service';
@@ -23,7 +23,8 @@ export class CurrencyConverterComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private currencyService: CurrencyService
+    private currencyService: CurrencyService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -46,6 +47,7 @@ export class CurrencyConverterComponent implements OnInit {
           name: name as string
         }));
         this.currenciesLoading = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         if (err.status === 401 || err.status === 403) {
@@ -56,6 +58,7 @@ export class CurrencyConverterComponent implements OnInit {
           this.errorMsg = 'Error al cargar las monedas. Verificá la API key.';
         }
         this.currenciesLoading = false;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -76,6 +79,7 @@ export class CurrencyConverterComponent implements OnInit {
         this.result = data.result;
         this.rate = data.info?.rate ?? null;
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         if (err.status === 429) {
@@ -84,6 +88,7 @@ export class CurrencyConverterComponent implements OnInit {
           this.errorMsg = 'Error al realizar la conversión. Verificá los datos ingresados.';
         }
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }

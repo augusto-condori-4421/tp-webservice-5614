@@ -9,7 +9,6 @@ import { environment } from '../../../environments/environment';
 export class CarBrandsService {
 
   private makesUrl = 'https://car-specs.p.rapidapi.com/v2/cars/makes';
-  private modelsUrl = 'https://car-specs.p.rapidapi.com/v2/cars/models';
 
   // caché de marcas para no hacer doble petición
   private cachedMakes: any[] | null = null;
@@ -34,9 +33,9 @@ export class CarBrandsService {
     );
   }
 
-  // trae los modelos de una marca específica por su id
-  getModelsByMake(makeId: number): Observable<any[]> {
-    const url = `${this.modelsUrl}?makeId=${makeId}`;
+  // trae los modelos de una marca específica — endpoint con path param: /makes/{id}/models
+  getModelsByMake(makeId: any): Observable<any[]> {
+    const url = `https://car-specs.p.rapidapi.com/v2/cars/makes/${makeId}/models`;
     return this.http.get<any[]>(url, { headers: this.getHeaders() });
   }
 }

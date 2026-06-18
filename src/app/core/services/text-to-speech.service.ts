@@ -7,9 +7,10 @@ import { environment } from '../../../environments/environment';
 @Injectable({ providedIn: 'root' })
 export class TextToSpeechService {
 
-  private apiUrl = 'https://eidosspeech.xyz/api/v1/tts';
+  // ruta local del proxy — el dev server la redirige a eidosspeech.xyz (evita CORS)
+  private apiUrl = '/eidosspeech-proxy/api/v1/tts';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // manda el texto y la voz, recibe el audio como blob
   synthesizeSpeech(text: string, voice: string): Observable<Blob> {

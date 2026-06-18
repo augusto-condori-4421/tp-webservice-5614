@@ -1,6 +1,6 @@
 // usa text-to-speech.service.ts para generar audio a partir de texto
 // la lógica de llamadas http está en src/app/core/services/text-to-speech.service.ts
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TextToSpeechService } from '../../core/services/text-to-speech.service';
 
@@ -19,24 +19,27 @@ interface Voice {
 export class TextToSpeechComponent implements OnDestroy {
 
   inputText: string = '';
-  selectedVoice: string = 'es-AR-TomasNeural';
+  selectedVoice: string = 'es-ES-AlvaroNeural';
   audioUrl: string | null = null;   // URL temporal del blob de audio
   loading: boolean = false;
   errorMsg: string = '';
   charCount: number = 0;
 
-  // voces disponibles en EidosSpeech (formato Microsoft Neural)
+  // voces disponibles en EidosSpeech (formato Microsoft Edge TTS)
   voices: Voice[] = [
-    { id: 'es-AR-TomasNeural',    label: 'Tomás — Español (Argentina)' },
-    { id: 'es-AR-ElenaNeural',    label: 'Elena — Español (Argentina)' },
-    { id: 'es-ES-AlvaroNeural',   label: 'Álvaro — Español (España)' },
-    { id: 'es-ES-ElviraNeural',   label: 'Elvira — Español (España)' },
-    { id: 'en-US-GuyNeural',      label: 'Guy — English (US)' },
-    { id: 'en-US-JennyNeural',    label: 'Jenny — English (US)' },
-    { id: 'pt-BR-FranciscaNeural',label: 'Francisca — Português (Brasil)' }
+    { id: 'es-AR-TomasNeural', label: 'Tomás — Español (Argentina)' },
+    { id: 'es-AR-ElenaNeural', label: 'Elena — Español (Argentina)' },
+    { id: 'es-ES-AlvaroNeural', label: 'Álvaro — Español (España)' },
+    { id: 'es-ES-ElviraNeural', label: 'Elvira — Español (España)' },
+    { id: 'en-US-GuyNeural', label: 'Guy — English (US)' },
+    { id: 'en-US-JennyNeural', label: 'Jenny — English (US)' },
+    { id: 'pt-BR-FranciscaNeural', label: 'Francisca — Português (Brasil)' }
   ];
 
-  constructor(private ttsService: TextToSpeechService) {}
+  constructor(
+    private ttsService: TextToSpeechService,
+    private cdr: ChangeDetectorRef
+  ) { }
 
   // actualizo el contador de caracteres al escribir
   onTextChange(): void {
@@ -65,14 +68,18 @@ export class TextToSpeechComponent implements OnDestroy {
       next: (blob) => {
         this.audioUrl = URL.createObjectURL(blob);
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         if (err.status === 401 || err.status === 403) {
           this.errorMsg = 'API key inválida. Verificá la clave de EidosSpeech.';
+        } else if (err.status === 429) {
+          this.errorMsg = 'Límite de solicitudes alcanzado (3 por minuto / 30 por día).';
         } else {
           this.errorMsg = 'Error al generar el audio. Intentá de nuevo.';
         }
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }

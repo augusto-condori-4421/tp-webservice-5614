@@ -1,6 +1,6 @@
 // usa car-brands.service.ts para traer marcas y modelos
 // la lógica de llamadas http está en src/app/core/services/car-brands.service.ts
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CarBrandsService } from '../../core/services/car-brands.service';
 
 @Component({
@@ -24,7 +24,10 @@ export class CarMakerComponent implements OnInit, OnDestroy {
   // instancia del modal para reutilizarla
   private modalInstance: any = null;
 
-  constructor(private carBrandsService: CarBrandsService) {}
+  constructor(
+    private carBrandsService: CarBrandsService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.loadMakes();
@@ -36,6 +39,7 @@ export class CarMakerComponent implements OnInit, OnDestroy {
       next: (data) => {
         this.makes = data;
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         if (err.status === 401 || err.status === 403) {
@@ -44,6 +48,7 @@ export class CarMakerComponent implements OnInit, OnDestroy {
           this.errorMsg = 'Error al cargar las marcas. Verificá la API key.';
         }
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -70,10 +75,12 @@ export class CarMakerComponent implements OnInit, OnDestroy {
         this.models = data;
         this.modelsCache.set(make.id, data);  // guardo en caché
         this.modelsLoading = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.modelsError = 'Error al cargar los modelos.';
         this.modelsLoading = false;
+        this.cdr.detectChanges();
       }
     });
   }
