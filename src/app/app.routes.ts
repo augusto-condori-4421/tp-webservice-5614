@@ -37,6 +37,12 @@ export const routes: Routes = [
         .then(m => m.WeatherComponent)
   },
   {
+    path: 'recipes',
+    loadComponent: () =>
+      import('./pages/recipes/recipes.component')
+        .then(m => m.RecipesComponent)
+  },
+  {
     path: '**',
     redirectTo: ''
   }

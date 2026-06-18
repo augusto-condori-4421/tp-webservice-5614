@@ -1,0 +1,195 @@
+<!-- página de búsqueda de recetas low-carb -->
+<div class="container py-4">
+  <h2 class="mb-4 fw-bold" data-aos="fade-down">
+    <i class="bi bi-egg-fried me-2 text-primary"></i>Recetas Low-Carb
+    <small class="fs-6 text-muted fw-normal ms-2">Buscador de recetas</small>
+  </h2>
+
+  <!-- buscador -->
+  <div class="row justify-content-center mb-5" data-aos="fade-up" data-aos-delay="100">
+    <div class="col-md-7 col-lg-6">
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+          <label for="recipeSearch" class="form-label fw-semibold">¿Qué receta buscás?</label>
+          <div class="input-group">
+            <input id="recipeSearch" type="text" class="form-control form-control-lg"
+              placeholder="Ej: pizza, chicken, coffee..." [(ngModel)]="searchText" (keyup.enter)="onSearch()" />
+            <button id="searchBtn" class="btn btn-primary px-4" (click)="onSearch()"
+              [disabled]="!searchText.trim() || loading">
+              @if (loading) {
+              <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+              } @else {
+              <i class="bi bi-search me-1"></i>
+              }
+              BUSCAR
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- spinner de carga -->
+  @if (loading) {
+  <div class="text-center my-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Buscando...</span>
+    </div>
+    <p class="mt-2 text-muted">Buscando recetas...</p>
+  </div>
+  }
+
+  <!-- mensaje de error -->
+  @if (errorMsg) {
+  <div class="alert alert-danger">
+    <i class="bi bi-exclamation-triangle me-2"></i>{{ errorMsg }}
+  </div>
+  }
+
+  <!-- sin resultados -->
+  @if (!loading && !errorMsg && hasSearched && recipes.length === 0) {
+  <div class="text-center text-muted my-5">
+    <i class="bi bi-journal-x display-4 d-block mb-3"></i>
+    No se encontraron recetas para "<strong>{{ searchText }}</strong>".
+  </div>
+  }
+
+  <!-- resultados -->
+  @if (!loading && !errorMsg && recipes.length > 0) {
+  <p class="text-muted mb-4">
+    <i class="bi bi-check-circle me-1 text-success"></i>
+    {{ recipes.length }} receta(s) encontrada(s) para "<strong>{{ searchText }}</strong>"
+  </p>
+
+  <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+    @for (recipe of recipes; track recipe.id; let i = $index) {
+    <div class="col" data-aos="fade-up" [attr.data-aos-delay]="i * 60 < 400 ? i * 60 : 400">
+      <div class="card h-100 shadow-sm border-0">
+
+        <!-- imagen -->
+        @if (recipe.image) {
+        <img [src]="recipe.image" [alt]="recipe.name" class="card-img-top card-img-fixed"
+          referrerpolicy="no-referrer" />
+        } @else {
+        <div class="card-img-fixed bg-light d-flex align-items-center justify-content-center">
+          <i class="bi bi-egg-fried display-3 text-muted"></i>
+        </div>
+        }
+
+        <div class="card-body d-flex flex-column">
+
+          <!-- nombre -->
+          <h5 class="card-title fw-bold mb-2">{{ recipe.name }}</h5>
+
+          <!-- datos rápidos -->
+          @if (recipe.prepareTime || recipe.cookTime || recipe.servings) {
+          <div class="d-flex gap-3 mb-2">
+            @if (recipe.prepareTime) {
+            <span class="badge bg-secondary">
+              <i class="bi bi-clock me-1"></i>Prep: {{ recipe.prepareTime }} min
+            </span>
+            }
+            @if (recipe.cookTime) {
+            <span class="badge bg-secondary">
+              <i class="bi bi-fire me-1"></i>Cocción: {{ recipe.cookTime }} min
+            </span>
+            }
+            @if (recipe.servings) {
+            <span class="badge bg-secondary">
+              <i class="bi bi-people me-1"></i>{{ recipe.servings }} porción(es)
+            </span>
+            }
+          </div>
+          }
+
+          <!-- descripción limpia (sin markdown) -->
+          <p class="card-text text-muted small flex-grow-1">
+            {{ getShortDescription(recipe.description) }}
+          </p>
+
+          <!-- ingredientes -->
+          @if (recipe.ingredients && recipe.ingredients.length > 0) {
+          <div class="mb-3">
+            <p class="fw-semibold small mb-1">
+              <i class="bi bi-list-ul me-1 text-primary"></i>Ingredientes:
+            </p>
+            <ul class="list-unstyled mb-0">
+              @for (ing of recipe.ingredients; track ing.name) {
+              <li class="small text-muted">
+                <i class="bi bi-dot text-primary"></i>
+                {{ ing.name }}
+                @if (ing.servingSize?.desc) {
+                <span class="text-secondary"> — {{ ing.servingSize?.desc }}</span>
+                }
+              </li>
+              }
+            </ul>
+          </div>
+          }
+
+          <!-- botón TRADUCIR -->
+          <button class="btn btn-outline-primary btn-sm mt-auto" (click)="onTranslate(recipe)">
+            <i class="bi bi-translate me-1"></i>TRADUCIR DESCRIPCIÓN
+          </button>
+
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+  }
+
+</div>
+
+<!-- modal de traducción -->
+<div class="modal fade" id="translateModal" tabindex="-1" aria-labelledby="translateModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="translateModalLabel">
+          <i class="bi bi-translate me-2"></i>Traducción al Español
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body p-4">
+        @if (selectedRecipe) {
+        <p class="fw-semibold mb-3">
+          <i class="bi bi-egg-fried me-1 text-primary"></i>{{ selectedRecipe.name }}
+        </p>
+
+        <!-- texto original limpio -->
+        <div class="mb-3">
+          <p class="small fw-semibold text-muted mb-1">Original (English):</p>
+          <p class="fst-italic text-muted small border-start border-primary ps-3 mb-0">
+            {{ getShortDescription(selectedRecipe.description) }}
+          </p>
+        </div>
+
+        <hr />
+
+        <!-- traducción -->
+        <div>
+          <p class="small fw-semibold text-muted mb-1">Traducción (Español):</p>
+          @if (translating) {
+          <div class="d-flex align-items-center gap-2 text-muted">
+            <span class="spinner-border spinner-border-sm" role="status"></span>
+            Traduciendo...
+          </div>
+          }
+          @if (translationError) {
+          <div class="alert alert-danger py-2 px-3 small mb-0">
+            <i class="bi bi-exclamation-triangle me-1"></i>{{ translationError }}
+          </div>
+          }
+          @if (translation && !translating) {
+          <p class="mb-0">{{ translation }}</p>
+          }
+        </div>
+        }
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>

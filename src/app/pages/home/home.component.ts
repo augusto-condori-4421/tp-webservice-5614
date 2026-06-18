@@ -42,6 +42,12 @@ export class HomeComponent {
       description: 'Consultá el clima actual de cualquier ciudad del mundo.',
       icon: 'bi-cloud-sun-fill',
       route: '/weather'
+    },
+    {
+      title: 'Recetas',
+      description: 'Buscá recetas saludables y traducí su descripción al español.',
+      icon: 'bi-egg-fried',
+      route: '/recipes'
     }
   ];
 }
