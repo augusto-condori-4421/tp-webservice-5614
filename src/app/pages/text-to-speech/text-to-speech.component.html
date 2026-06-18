@@ -1,0 +1,93 @@
+<!-- título de sección -->
+<div class="container py-4">
+  <h2 class="mb-4 fw-bold" data-aos="fade-down">
+    <i class="bi bi-volume-up-fill me-2 text-primary"></i>Texto a Audio
+    <small class="fs-6 text-muted fw-normal ms-2">Text-to-Speech con IA</small>
+  </h2>
+
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-7" data-aos="fade-up" data-aos-delay="100">
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+          <h5 class="card-title mb-4">
+            <i class="bi bi-mic me-2"></i>Generá audio a partir de texto
+          </h5>
+
+          <!-- textarea para el texto -->
+          <div class="mb-3">
+            <label for="inputText" class="form-label fw-semibold">Texto a convertir</label>
+            <textarea
+              id="inputText"
+              class="form-control"
+              rows="5"
+              maxlength="500"
+              placeholder="Escribí el texto aquí..."
+              [(ngModel)]="inputText"
+              (input)="onTextChange()"
+            ></textarea>
+            <!-- contador de caracteres -->
+            <div class="text-end text-muted small mt-1">
+              {{ charCount }}/500 caracteres
+            </div>
+          </div>
+
+          <!-- select de voces con nombre legible -->
+          <div class="mb-4">
+            <label for="voiceSelect" class="form-label fw-semibold">Voz</label>
+            <select
+              id="voiceSelect"
+              class="form-select"
+              [(ngModel)]="selectedVoice"
+            >
+              @for (voice of voices; track voice.id) {
+                <option [value]="voice.id">{{ voice.label }}</option>
+              }
+            </select>
+          </div>
+
+          <!-- botón de generación -->
+          <button
+            id="generateBtn"
+            class="btn btn-primary w-100"
+            (click)="onGenerate()"
+            [disabled]="!inputText.trim() || loading"
+          >
+            @if (loading) {
+              <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+              Generando audio...
+            } @else {
+              <i class="bi bi-play-circle me-2"></i>Generar Audio
+            }
+          </button>
+
+          <!-- mensaje de error -->
+          @if (errorMsg) {
+            <div class="alert alert-danger mt-3 mb-0">
+              <i class="bi bi-exclamation-triangle me-2"></i>{{ errorMsg }}
+            </div>
+          }
+
+          <!-- player de audio -->
+          @if (audioUrl) {
+            <div class="mt-4" data-aos="fade-up">
+              <label class="form-label fw-semibold">
+                <i class="bi bi-soundwave me-2 text-success"></i>Audio generado
+              </label>
+              <audio
+                #audioPlayer
+                class="w-100"
+                controls
+                [src]="audioUrl"
+              ></audio>
+              <p class="text-muted small mt-1 mb-0">
+                <i class="bi bi-info-circle me-1"></i>
+                Voz: <strong>{{ selectedVoiceLabel }}</strong>
+              </p>
+            </div>
+          }
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

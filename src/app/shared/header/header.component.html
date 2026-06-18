@@ -1,0 +1,63 @@
+<!-- navbar principal con colapso para mobile -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container">
+    <!-- brand / logo -->
+    <a class="navbar-brand fw-bold" routerLink="/">
+      <i class="bi bi-code-slash me-2"></i>TP WebService
+    </a>
+
+    <!-- botón hamburguesa para mobile -->
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarMain"
+      aria-controls="navbarMain"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- links de navegación -->
+    <div class="collapse navbar-collapse" id="navbarMain">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            routerLink="/"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <i class="bi bi-house me-1"></i>Inicio
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/movies" routerLinkActive="active">
+            <i class="bi bi-film me-1"></i>Películas
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/cars" routerLinkActive="active">
+            <i class="bi bi-car-front-fill me-1"></i>Autos
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/currency" routerLinkActive="active">
+            <i class="bi bi-currency-exchange me-1"></i>Divisas
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/tts" routerLinkActive="active">
+            <i class="bi bi-volume-up-fill me-1"></i>Audio
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/weather" routerLinkActive="active">
+            <i class="bi bi-cloud-sun-fill me-1"></i>Clima
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,112 @@
+<!-- título de sección -->
+<div class="container py-4">
+  <h2 class="mb-4 fw-bold" data-aos="fade-down">
+    <i class="bi bi-film me-2 text-primary"></i>Portal de Películas
+    <small class="fs-6 text-muted fw-normal ms-2">Top 100 IMDB</small>
+  </h2>
+
+  <!-- barra de búsqueda y filtro por género -->
+  <div class="row g-3 mb-4" data-aos="fade-down" data-aos-delay="100">
+    <div class="col-md-6">
+      <div class="input-group">
+        <span class="input-group-text"><i class="bi bi-search"></i></span>
+        <input
+          id="movieSearch"
+          type="text"
+          class="form-control"
+          placeholder="Buscar por título..."
+          [(ngModel)]="searchText"
+          (input)="applyFilters()"
+        />
+      </div>
+    </div>
+    <!-- filtro por género -->
+    <div class="col-md-4">
+      <select
+        id="genreSelect"
+        class="form-select"
+        [(ngModel)]="selectedGenre"
+        (change)="applyFilters()"
+      >
+        <option value="">Todos los géneros</option>
+        @for (genre of allGenres; track genre) {
+          <option [value]="genre">{{ genre }}</option>
+        }
+      </select>
+    </div>
+    <div class="col-md-2 text-muted d-flex align-items-center">
+      {{ filtered.length }} resultado(s)
+    </div>
+  </div>
+
+  <!-- spinner de carga -->
+  @if (loading) {
+    <div class="text-center my-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+      <p class="mt-2 text-muted">Cargando películas...</p>
+    </div>
+  }
+
+  <!-- mensaje de error -->
+  @if (errorMsg) {
+    <div class="alert alert-danger">
+      <i class="bi bi-exclamation-triangle me-2"></i>{{ errorMsg }}
+    </div>
+  }
+
+  <!-- grilla de películas -->
+  @if (!loading && !errorMsg) {
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 g-4">
+      @for (movie of filtered; track movie.rank; let i = $index) {
+        <div
+          class="col"
+          data-aos="fade-up"
+          [attr.data-aos-delay]="i * 50 < 500 ? i * 50 : 500"
+        >
+          <div class="card h-100 shadow-sm border-0">
+            <!-- poster de la película -->
+            <img
+              [src]="movie.image"
+              [alt]="movie.title"
+              class="card-img-top card-img-fixed"
+            />
+            <div class="card-body d-flex flex-column">
+              <!-- título y ranking -->
+              <h6 class="card-title fw-bold mb-1">
+                <span class="badge bg-secondary me-1">#{{ movie.rank }}</span>
+                {{ movie.title }}
+              </h6>
+              <!-- año y rating -->
+              <p class="text-muted small mb-2">
+                <i class="bi bi-calendar me-1"></i>{{ movie.year }}
+                <span class="ms-2">
+                  <i class="bi bi-star-fill text-warning me-1"></i>{{ movie.rating }}
+                </span>
+              </p>
+              <!-- sinopsis truncada -->
+              <p class="card-text small text-muted flex-grow-1" style="overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">
+                {{ movie.description }}
+              </p>
+              <!-- badges de géneros -->
+              <div class="mt-2">
+                @for (genre of movie.genre; track genre) {
+                  <span class="badge bg-primary me-1 genre-badge">{{ genre }}</span>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- mensaje si no hay resultados -->
+    @if (filtered.length === 0) {
+      <div class="text-center text-muted my-5">
+        <i class="bi bi-search display-4 d-block mb-3"></i>
+        No se encontraron películas con ese criterio.
+      </div>
+    }
+  }
+</div>

@@ -1,0 +1,40 @@
+<!-- sección hero con título del proyecto -->
+<section class="bg-primary text-white py-5 mb-4">
+  <div class="container text-center" data-aos="fade-down">
+    <h1 class="display-4 fw-bold mb-3">
+      <i class="bi bi-code-slash me-3"></i>TP Web Services
+    </h1>
+    <p class="lead mb-0">
+      Programación y Servicios Web &mdash; FI UNJu 2026
+    </p>
+  </div>
+</section>
+
+<!-- grilla de cards para navegar a cada sección -->
+<div class="container pb-5">
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    @for (item of menuItems; track item.route; let i = $index) {
+      <div
+        class="col"
+        data-aos="fade-up"
+        [attr.data-aos-delay]="i * 100 < 500 ? i * 100 : 500"
+      >
+        <div class="card h-100 text-center shadow-sm border-0">
+          <div class="card-body d-flex flex-column align-items-center py-4">
+            <!-- ícono de bootstrap icons -->
+            <i class="bi {{ item.icon }} display-3 text-primary mb-3"></i>
+            <h5 class="card-title fw-bold">{{ item.title }}</h5>
+            <p class="card-text text-muted flex-grow-1">{{ item.description }}</p>
+            <!-- botón que navega a la sección -->
+            <a
+              [routerLink]="item.route"
+              class="btn btn-primary mt-3 stretched-link"
+            >
+              <i class="bi bi-arrow-right me-1"></i>Ir a la sección
+            </a>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

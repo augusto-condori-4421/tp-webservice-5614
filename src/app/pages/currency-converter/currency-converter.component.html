@@ -1,0 +1,130 @@
+<!-- título de sección -->
+<div class="container py-4">
+  <h2 class="mb-4 fw-bold" data-aos="fade-down">
+    <i class="bi bi-currency-exchange me-2 text-primary"></i>Conversor de Divisas
+  </h2>
+
+  <!-- card centrada con el formulario -->
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6" data-aos="fade-up" data-aos-delay="100">
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+          <h5 class="card-title mb-4">
+            <i class="bi bi-arrow-left-right me-2"></i>Convertir moneda
+          </h5>
+
+          <!-- formulario siempre visible, los selects se deshabilitan mientras cargan -->
+          <form [formGroup]="converterForm" (ngSubmit)="onConvert()">
+
+            <!-- campo cantidad -->
+            <div class="mb-3">
+              <label for="amount" class="form-label fw-semibold">Cantidad</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-cash"></i></span>
+                <input
+                  id="amount"
+                  type="number"
+                  class="form-control"
+                  formControlName="amount"
+                  placeholder="Ej: 100"
+                  min="0.01"
+                  step="any"
+                />
+              </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <!-- moneda origen -->
+              <div class="col-6">
+                <label for="fromCurrency" class="form-label fw-semibold">
+                  De
+                  @if (currenciesLoading) {
+                    <span class="spinner-border spinner-border-sm ms-1 text-secondary" role="status"></span>
+                  }
+                </label>
+                <select
+                  id="fromCurrency"
+                  class="form-select"
+                  formControlName="fromCurrency"
+                  [disabled]="currenciesLoading"
+                >
+                  @if (currenciesLoading) {
+                    <option value="">Cargando monedas...</option>
+                  }
+                  @for (currency of currencies; track currency.code) {
+                    <option [value]="currency.code">{{ currency.code }} — {{ currency.name }}</option>
+                  }
+                </select>
+              </div>
+
+              <!-- moneda destino -->
+              <div class="col-6">
+                <label for="toCurrency" class="form-label fw-semibold">
+                  A
+                  @if (currenciesLoading) {
+                    <span class="spinner-border spinner-border-sm ms-1 text-secondary" role="status"></span>
+                  }
+                </label>
+                <select
+                  id="toCurrency"
+                  class="form-select"
+                  formControlName="toCurrency"
+                  [disabled]="currenciesLoading"
+                >
+                  @if (currenciesLoading) {
+                    <option value="">Cargando monedas...</option>
+                  }
+                  @for (currency of currencies; track currency.code) {
+                    <option [value]="currency.code">{{ currency.code }} — {{ currency.name }}</option>
+                  }
+                </select>
+              </div>
+            </div>
+
+            <!-- botón de conversión -->
+            <button
+              id="convertBtn"
+              type="submit"
+              class="btn btn-primary w-100"
+              [disabled]="converterForm.invalid || loading || currenciesLoading"
+            >
+              @if (loading) {
+                <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                Convirtiendo...
+              } @else {
+                <i class="bi bi-arrow-repeat me-2"></i>Convertir
+              }
+            </button>
+          </form>
+
+          <!-- resultado de la conversión -->
+          @if (result !== null) {
+            <div class="alert alert-success mt-4 mb-0">
+              <h5 class="alert-heading">
+                <i class="bi bi-check-circle me-2"></i>Resultado
+              </h5>
+              <p class="mb-1 fs-5">
+                <strong>{{ converterForm.value.amount | number:'1.2-2' }} {{ converterForm.value.fromCurrency }}</strong>
+                =
+                <strong>{{ result | number:'1.2-4' }} {{ converterForm.value.toCurrency }}</strong>
+              </p>
+              @if (rate !== null) {
+                <p class="mb-0 small text-muted">
+                  Tasa: 1 {{ converterForm.value.fromCurrency }} = {{ rate | number:'1.4-6' }} {{ converterForm.value.toCurrency }}
+                </p>
+              }
+            </div>
+          }
+
+          <!-- mensaje de error -->
+          @if (errorMsg) {
+            <div class="alert alert-danger mt-3 mb-0">
+              <i class="bi bi-exclamation-triangle me-2"></i>{{ errorMsg }}
+            </div>
+          }
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,92 @@
+<!-- título de sección -->
+<div class="container py-4">
+  <h2 class="mb-4 fw-bold" data-aos="fade-down">
+    <i class="bi bi-cloud-sun-fill me-2 text-primary"></i>Clima por Ciudad
+    <small class="fs-6 text-muted fw-normal ms-2">Open-Meteo (sin registro)</small>
+  </h2>
+
+  <!-- formulario de búsqueda de ciudad -->
+  <div class="row justify-content-center">
+    <div class="col-md-6" data-aos="fade-up" data-aos-delay="100">
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body p-4">
+          <label for="cityInput" class="form-label fw-semibold">Ingresá una ciudad</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-geo-alt-fill"></i></span>
+            <input
+              id="cityInput"
+              type="text"
+              class="form-control"
+              placeholder="Ej: Buenos Aires"
+              [(ngModel)]="cityInput"
+              (keyup.enter)="onSearch()"
+            />
+            <!-- botón de búsqueda -->
+            <button
+              id="searchBtn"
+              class="btn btn-primary"
+              (click)="onSearch()"
+              [disabled]="!cityInput.trim() || loading"
+            >
+              @if (loading) {
+                <span class="spinner-border spinner-border-sm" role="status"></span>
+              } @else {
+                <i class="bi bi-search"></i>
+              }
+              Buscar
+            </button>
+          </div>
+          <p class="text-muted small mt-2 mb-0">
+            También podés presionar Enter para buscar.
+          </p>
+        </div>
+      </div>
+
+      <!-- ciudad no encontrada -->
+      @if (notFound) {
+        <div class="alert alert-warning">
+          <i class="bi bi-exclamation-triangle me-2"></i>
+          Ciudad no encontrada. Intentá con otro nombre.
+        </div>
+      }
+
+      <!-- mensaje de error -->
+      @if (errorMsg) {
+        <div class="alert alert-danger">
+          <i class="bi bi-exclamation-triangle me-2"></i>{{ errorMsg }}
+        </div>
+      }
+
+      <!-- resultado del clima -->
+      @if (weatherResult) {
+        <div class="card shadow border-0 text-center" data-aos="fade-up">
+          <div class="card-body py-5">
+            <!-- ícono grande según el código WMO -->
+            <i class="bi {{ getIcon(weatherResult.weathercode) }} display-1 text-primary mb-3 d-block"></i>
+
+            <!-- ciudad y país -->
+            <h3 class="fw-bold mb-1">{{ weatherResult.ciudad }}</h3>
+            <p class="text-muted mb-4">
+              <i class="bi bi-flag me-1"></i>{{ weatherResult.pais }}
+            </p>
+
+            <!-- temperatura grande -->
+            <p class="display-4 fw-bold text-primary mb-2">
+              {{ weatherResult.temperatura }}<span class="fs-4">°C</span>
+            </p>
+
+            <!-- descripción del clima -->
+            <p class="fs-5 mb-3">{{ getDescription(weatherResult.weathercode) }}</p>
+
+            <!-- viento -->
+            <p class="text-muted">
+              <i class="bi bi-wind me-2"></i>
+              Viento: <strong>{{ weatherResult.viento }} km/h</strong>
+            </p>
+          </div>
+        </div>
+      }
+
+    </div>
+  </div>
+</div>

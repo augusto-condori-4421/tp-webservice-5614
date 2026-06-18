@@ -1,1 +1,22 @@
-/* You can add global styles to this file, and also import other style files */
+/* tema Bootswatch Brite (reemplaza al CSS de Bootstrap estándar) */
+@import "bootswatch/dist/brite/bootstrap.min.css";
+
+/* iconos de Bootstrap */
+@import "bootstrap-icons/font/bootstrap-icons.css";
+
+/* animaciones AOS */
+@import "aos/dist/aos.css";
+
+/* clases propias del proyecto */
+.card-img-fixed {
+  object-fit: cover;
+  height: 200px;
+}
+
+.genre-badge {
+  font-size: 0.7rem;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
