@@ -1,0 +1,10 @@
+{
+  "/eidosspeech-proxy": {
+    "target": "https://eidosspeech.xyz",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/eidosspeech-proxy": ""
+    }
+  }
+}
